@@ -24,6 +24,16 @@ npm run build
 
 After loading, visit `https://www.linkedin.com/feed/` — promoted posts should be hidden.
 
+## Options
+
+The extension includes an options page where you can:
+
+- enable or disable hiding of **Promoted** posts
+- enable or disable hiding of **Suggested** posts
+- enter custom comma-separated keywords or company names to hide matching feed cards
+
+To access options, open the extension details in your browser and click **Extension options** or right-click the extension icon and choose **Options**.
+
 ## Notes
 
 - The build produces `dist/index.global.js` (the bundled content script) and copies `manifest.json` into `dist/` so the folder can be loaded as an unpacked extension.

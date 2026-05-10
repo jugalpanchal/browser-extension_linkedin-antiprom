@@ -24,6 +24,14 @@ npm run build
 
 After loading, visit `https://www.linkedin.com/feed/` — promoted posts should be hidden.
 
+## Quick install (for non-developers)
+
+1. Download the built `dist` folder from the repository release or branch.
+2. Open `chrome://extensions` in Chrome/Edge/Brave.
+3. Enable **Developer mode**.
+4. Click **Load unpacked** and select the downloaded `dist` folder.
+5. Visit `https://www.linkedin.com/feed/` to confirm the extension is active.
+
 ## Options
 
 The extension includes an options page where you can:

@@ -18,6 +18,12 @@ function findPostAncestor(el: Element): Element | null {
         el.closest('div.feed-shared-update-v2') ||
         el.closest('div.occludable-update') ||
         el.closest('div.feed-shared-actor') ||
+        el.closest('div.feed-shared-commentary') ||
+        el.closest('div.comments-comment-item') ||
+        el.closest('div.comments-comments-list__comment-item') ||
+        el.closest('div.comments-comment-card') ||
+        el.closest('[data-comment-id]') ||
+        el.closest('[data-test-comment-item]') ||
         el.closest('div[data-id]') ||
         el.closest('div[data-urn]') ||
         el.closest('div[data-entity-urn]') ||

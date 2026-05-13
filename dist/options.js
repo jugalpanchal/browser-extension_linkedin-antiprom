@@ -2,8 +2,8 @@
 function saveOptions() {
     const hidePromoted = document.getElementById('hide-promoted').checked;
     const hideSuggested = document.getElementById('hide-suggested').checked;
-    const hideCustom = document.getElementById('hide-custom').checked;
     const customKeywords = document.getElementById('custom-keywords').value.trim();
+    const hideCustom = document.getElementById('hide-custom').checked || customKeywords.length > 0;
 
     chrome.storage.sync.set({
         hidePromoted: hidePromoted,
@@ -30,10 +30,11 @@ function restoreOptions() {
     }, function(items) {
         document.getElementById('hide-promoted').checked = items.hidePromoted;
         document.getElementById('hide-suggested').checked = items.hideSuggested;
-        document.getElementById('hide-custom').checked = items.hideCustom;
         const keywordsField = document.getElementById('custom-keywords');
         keywordsField.value = items.customKeywords || '';
-        keywordsField.disabled = !items.hideCustom;
+        const shouldHideCustom = items.hideCustom || !!keywordsField.value.trim();
+        document.getElementById('hide-custom').checked = shouldHideCustom;
+        keywordsField.disabled = !shouldHideCustom;
     });
 }
 

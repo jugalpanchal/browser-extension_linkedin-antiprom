@@ -5,7 +5,7 @@ import { debounce } from './debounce.function';
 async function waitForMain(timeoutMs = 5000): Promise<HTMLElement> {
     const start = Date.now();
     while (Date.now() - start < timeoutMs) {
-        const main = (document.querySelector<HTMLElement>('main') || document.getElementById('main')) as HTMLElement | null;
+        const main = document.querySelector<HTMLElement>('main, [role="main"], [data-testid="mainFeed"], #main');
         if (main) return main;
 
         // If document is already interactive/complete, fall back to body
@@ -40,6 +40,7 @@ async function getOptions(): Promise<{ hidePromoted: boolean; hideSuggested: boo
 
 void (async function main() {
     const mainContainer = await waitForMain();
+    const observerTarget = document.body || mainContainer;
     let options = await getOptions();
 
     // run once immediately to hide any existing promoted posts
@@ -76,5 +77,5 @@ void (async function main() {
     const debounceTimeMs = 500;
     const debouncedHidePromoted = debounce(() => hidePromoted(options), debounceTimeMs);
 
-    listenToPageUpdates(mainContainer, debouncedHidePromoted);
+    listenToPageUpdates(observerTarget, debouncedHidePromoted);
 })();

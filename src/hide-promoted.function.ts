@@ -10,27 +10,56 @@ function hideElement(el: Element) {
     hiddenSet.add(el);
 }
 
+const postAncestorSelectors = [
+    'article',
+    'div[role="article"]',
+    '*[role="listitem"]',
+    'div.feed-shared-update',
+    'div.feed-shared-update-v2',
+    'div.occludable-update',
+    'div.feed-shared-actor',
+    'div.feed-shared-commentary',
+    'div.comments-comment-item',
+    'div.comments-comments-list__comment-item',
+    'div.comments-comment-card',
+    '[data-comment-id]',
+    '[data-test-comment-item]',
+    'div[data-id]',
+    'div[data-urn]',
+    'div[data-entity-urn]',
+    'div[data-feed-item-id]',
+    '[data-test-feed-item]',
+].map((selector) => selector as const);
+
+const containerSelectors = [
+    'article',
+    'div[role="article"]',
+    '*[role="listitem"]',
+    'div[data-feed-item-id]',
+    '[data-test-feed-item]',
+    'div.feed-shared-update',
+    'div.feed-shared-update-v2',
+    'div.occludable-update',
+].map((selector) => selector as const);
+
+type PostAncestorSelector = typeof postAncestorSelectors[number];
+
 function findPostAncestor(el: Element): Element | null {
-    return (
-        el.closest('article') ||
-        el.closest('div[role="article"]') ||
-        el.closest('div.feed-shared-update') ||
-        el.closest('div.feed-shared-update-v2') ||
-        el.closest('div.occludable-update') ||
-        el.closest('div.feed-shared-actor') ||
-        el.closest('div.feed-shared-commentary') ||
-        el.closest('div.comments-comment-item') ||
-        el.closest('div.comments-comments-list__comment-item') ||
-        el.closest('div.comments-comment-card') ||
-        el.closest('[data-comment-id]') ||
-        el.closest('[data-test-comment-item]') ||
-        el.closest('div[data-id]') ||
-        el.closest('div[data-urn]') ||
-        el.closest('div[data-entity-urn]') ||
-        el.closest('div[data-feed-item-id]') ||
-        el.closest('[data-test-feed-item]') ||
-        null
-    );
+    for (const selector of postAncestorSelectors) {
+        const ancestor = el.closest(selector);
+        if (ancestor) return ancestor;
+    }
+    return null;
+}
+
+function hideMatchingContainers(regex: RegExp): void {
+    const candidates = Array.from(document.querySelectorAll(containerSelectors.join(',')));
+    for (const container of candidates) {
+        if (!container.textContent) continue;
+        if (regex.test(container.textContent)) {
+            hideElement(container);
+        }
+    }
 }
 
 function escapeRegExp(text: string): string {
@@ -62,6 +91,7 @@ export function hidePromoted(options: { hidePromoted: boolean; hideSuggested: bo
     const iterator = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
     const regex = new RegExp(`(${terms.map(escapeRegExp).join('|')})`, 'i');
+    const visited = new WeakSet<Element>();
 
     for (let i = 0; i < iterator.snapshotLength; i++) {
         const node = iterator.snapshotItem(i);
@@ -71,11 +101,18 @@ export function hidePromoted(options: { hidePromoted: boolean; hideSuggested: bo
         if (ancestor) hideElement(ancestor);
     }
 
-    const promotes = Array.from(document.querySelectorAll('span, button, div, p, strong, b')).filter(
+    const contentSelectors = ['span', 'button', 'div', 'p', 'strong', 'b', 'a'];
+    const promotes = Array.from(document.querySelectorAll(contentSelectors.join(','))).filter(
         (el) => el.textContent && regex.test(el.textContent)
     );
+
     promotes.forEach((el) => {
+        if (visited.has(el)) return;
+        visited.add(el);
+
         const ancestor = findPostAncestor(el);
         if (ancestor) hideElement(ancestor);
     });
+
+    hideMatchingContainers(regex);
 }

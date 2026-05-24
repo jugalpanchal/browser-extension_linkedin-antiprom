@@ -29,7 +29,7 @@ const postAncestorSelectors = [
     'div[data-entity-urn]',
     'div[data-feed-item-id]',
     '[data-test-feed-item]',
-].map((selector) => selector as const);
+] as const;
 
 const containerSelectors = [
     'article',
@@ -40,9 +40,7 @@ const containerSelectors = [
     'div.feed-shared-update',
     'div.feed-shared-update-v2',
     'div.occludable-update',
-].map((selector) => selector as const);
-
-type PostAncestorSelector = typeof postAncestorSelectors[number];
+] as const;
 
 function findPostAncestor(el: Element): Element | null {
     for (const selector of postAncestorSelectors) {

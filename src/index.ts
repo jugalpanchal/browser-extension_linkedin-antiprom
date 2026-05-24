@@ -60,10 +60,10 @@ void (async function main() {
         if (!hasRelevantChange) return;
 
         options = {
-            hidePromoted: changes.hidePromoted ? changes.hidePromoted.newValue : options.hidePromoted,
-            hideSuggested: changes.hideSuggested ? changes.hideSuggested.newValue : options.hideSuggested,
-            hideCustom: changes.hideCustom ? changes.hideCustom.newValue : options.hideCustom,
-            customKeywords: changes.customKeywords ? changes.customKeywords.newValue : options.customKeywords,
+            hidePromoted: typeof changes.hidePromoted?.newValue === 'boolean' ? changes.hidePromoted.newValue : options.hidePromoted,
+            hideSuggested: typeof changes.hideSuggested?.newValue === 'boolean' ? changes.hideSuggested.newValue : options.hideSuggested,
+            hideCustom: typeof changes.hideCustom?.newValue === 'boolean' ? changes.hideCustom.newValue : options.hideCustom,
+            customKeywords: typeof changes.customKeywords?.newValue === 'string' ? changes.customKeywords.newValue : options.customKeywords,
         };
 
         try {
